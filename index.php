@@ -95,15 +95,28 @@ if ($isDay == 1) {
 <html class="light" lang="es">
 
 <head>
+    <meta property="og:title" content="Balneario Río Las Moras" />
+    <meta property="og:description" content="Estado del clima y caudal en el Balneario Río Las Moras" />
+    <meta property="og:image" content="https://dre.dex.net.ar/previa.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dre.dex.net.ar" />
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Información Completa del Balneario Rio Las Moras</title>
+    <meta property="og:title" content="Balneario Río Las Moras" />
+    <meta property="og:description" content="Estado del clima y caudal en el Balneario Río Las Moras" />
+    <meta property="og:image" content="https://dre.dex.net.ar/previa.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dre.dex.net.ar" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
