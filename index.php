@@ -417,7 +417,7 @@ if ($isDay == 1) {
                 <div
                     class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex gap-4">
                     <div class="size-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-primary">health_and_safety</span>
+                        <span class="material-symbols-outlined text-primary">safety_check</span>
                     </div>
                     <div>
                         <h4 class="font-bold text-slate-800 dark:text-white mb-1">Zonas seguras para bañarse</h4>

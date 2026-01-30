@@ -4,8 +4,6 @@ $max_historial = 5; // Cambia este valor para ajustar el límite
 $historial = array_slice($historial, 0, 5);
 // Configuración de credenciales
 
-/*
-
 $apikey = 'L0MH80T0uphNVD1L5mLM60aEIjLTn6qb';
 $apisecret = 'ExpOiHDq5o7jBXgfL9sWvmsppiWYEQj1';
 
@@ -19,7 +17,9 @@ $canales = [
 		'nombre' => 'Turbina 2'
 	]
 ];
-*/
+
+
+/*
 
 $apikey = 'jlCllO4kExY3sEEA';
 $apisecret = 'L551wIjhwQKQROId';
@@ -34,6 +34,9 @@ $canales = [
         'nombre' => 'Turbina 2'
     ]
 ];
+
+*/
+
 
 $resultados = [];
 $turbina1 = null;
