@@ -1,4 +1,16 @@
+
 <?php
+// Leer el nivel desde estados.txt
+$caudal = 50; // Valor por defecto
+$estadosFile = __DIR__ . '/estados.txt';
+if (file_exists($estadosFile)) {
+    $json = file_get_contents($estadosFile);
+    $datos = json_decode($json, true);
+    if (isset($datos['caudal_actual'])) {
+        $caudal = (int)$datos['caudal_actual'];
+    }
+}
+
 // Datos por defecto (si falla la API)
 $temperature = 0;
 $humidity = 0;
@@ -8,7 +20,6 @@ $weatherBg = 'bg-[#ff8200]';
 $weatherIcon = 'sunny';
 $sunriseTime = '--:--';
 $sunsetTime = '--:--';
-$caudal = 50;
 
 // Cálculos para el círculo de caudal (Radio 78px, Ancho 12px)
 $radius = 78;
@@ -23,14 +34,23 @@ if ($caudal <= 25) {
     $nivelText = "Alto";
 }
 
-// Mock de últimos cambios
-$recentChanges = [
-    ['date' => '27/01', 'time' => '14:30', 'status' => 'Medio'],
-    ['date' => '27/01', 'time' => '10:15', 'status' => 'Bajo'],
-    ['date' => '27/01', 'time' => '08:00', 'status' => 'Alto'],
-    ['date' => '26/01', 'time' => '18:45', 'status' => 'Medio'],
-    ['date' => '26/01', 'time' => '12:00', 'status' => 'Bajo'],
-];
+
+// Leer historial real de estados.txt
+$recentChanges = [];
+if (file_exists($estadosFile)) {
+    $json = file_get_contents($estadosFile);
+    $datos = json_decode($json, true);
+    if (isset($datos['historial']) && is_array($datos['historial'])) {
+        foreach ($datos['historial'] as $item) {
+            $hora = isset($item['hora']) ? $item['hora'] : '';
+            $caudal_hist = isset($item['caudal']) ? $item['caudal'] : '';
+            $recentChanges[] = [
+                'hora' => $hora,
+                'caudal' => $caudal_hist
+            ];
+        }
+    }
+}
 
 // URL de Open-Meteo
 $apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=-31.5375&longitude=-68.5364&current=temperature_2m,relative_humidity_2m,wind_speed_10m,is_day&daily=sunrise,sunset&timezone=auto";
@@ -129,6 +149,17 @@ if ($isDay == 1) {
         }
     </style>
     <style>
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+    .fade-widget {
+        animation: fadeInOut 2s linear infinite;
+    }
+    </style>
+    <style>
         body {
             min-height: max(884px, 100dvh);
         }
@@ -225,11 +256,14 @@ if ($isDay == 1) {
                 <span
                     class="bg-green-500 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase flex items-center gap-2 shadow-xl border border-white/20">
                     <span class="size-2 bg-white rounded-full animate-pulse"></span>
-                    Seguro para Baño
+                    RESPETE LAS NORMAS DE SEGURIDAD
                 </span>
             </div>
         </section>
         <section class="px-4">
+            <div class="w-full rounded-2xl mb-4 p-4 bg-[#ff8200] text-white font-bold text-center text-base shadow border border-white/20">
+                <span class="fade-widget inline-block">Horarios de bañeros: martes a domingo de 12:00 a 21:30 hs</span>
+            </div>
             <div class="aspect-video w-full rounded-2xl overflow-hidden my-8">
                 <iframe width="100%" height="100%" src="https://www.youtube.com/embed/5eAO3eujEwg" title="YouTube video"
                     frameborder="0"
@@ -259,12 +293,28 @@ if ($isDay == 1) {
                                 <span class="text-xs font-bold text-sky-900/80 uppercase">Caudal</span>
                             </div>
                         </div>
+                        <?php 
+                        $horaActualizacion = '';
+                        if (file_exists($estadosFile)) {
+                            $json = file_get_contents($estadosFile);
+                            $datosRaiz = json_decode($json, true);
+                            if (isset($datosRaiz['hora'])) {
+                                $horaActualizacion = $datosRaiz['hora'];
+                            }
+                        }
+                        if ($horaActualizacion): ?>
+                        <?php endif; ?>
                     </div>
                     <div class="mt-8 w-full max-w-sm flex flex-col gap-3">
                         <div class="bg-white/30 p-4 rounded-xl w-full text-center">
-                            <p class="text-[10px] font-bold text-sky-900/80 uppercase mb-1">Nivel</p>
                             <p class="text-lg font-bold text-sky-900 drop-shadow">
-                                <?php echo $nivelText; ?>
+                                <?php
+                                if ($caudal <= 25) {
+                                    echo 'NO apto para bañarse';
+                                } else {
+                                    echo 'Apto para bañarse';
+                                }
+                                ?>
                             </p>
                         </div>
 
@@ -274,17 +324,29 @@ if ($isDay == 1) {
                             </p>
                             <div class="space-y-2">
                                 <?php foreach ($recentChanges as $index => $change): ?>
-                                    <div
-                                        class="flex items-center justify-between text-xs border-b border-sky-900/10 pb-1 last:border-0 last:pb-0">
+                                    <div class="flex items-center justify-between text-xs border-b border-sky-900/10 pb-1 last:border-0 last:pb-0">
                                         <span class="text-sky-900/70 font-medium">
-                                            <?php echo $change['date']; ?> <span class="mx-1">•</span>
-                                            <?php echo $change['time']; ?> hs
+                                            <?php echo htmlspecialchars($change['hora']); ?> hs
                                         </span>
-                                        <span class="text-sky-900 font-bold"><?php echo $change['status']; ?></span>
+                                        <span class="text-sky-900 font-bold"><?php echo htmlspecialchars($change['caudal']); ?>%</span>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
+                        <?php 
+                        $horaActualizacion = '';
+                        if (file_exists($estadosFile)) {
+                            $json = file_get_contents($estadosFile);
+                            $datosRaiz = json_decode($json, true);
+                            if (isset($datosRaiz['hora_actual'])) {
+                                $horaActualizacion = $datosRaiz['hora_actual'];
+                            }
+                        }
+                        if ($horaActualizacion): ?>
+                        <div class="text-[10px] text-sky-900/60 text-center mt-2">
+                            Actualizado <?php echo htmlspecialchars($horaActualizacion); ?>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -358,9 +420,10 @@ if ($isDay == 1) {
                         <span class="material-symbols-outlined text-primary">health_and_safety</span>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">Uso de Guardavidas</h4>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Báñese únicamente en las
-                            zonas delimitadas por boyas y bajo supervisión.</p>
+                        <h4 class="font-bold text-slate-800 dark:text-white mb-1">Zonas seguras para bañarse</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Bañarse solo en la zona habilitada en la margen sur, junto a los puestos de seguridad náutica.
+                        </p>
                     </div>
                 </div>
                 <div
@@ -392,7 +455,7 @@ if ($isDay == 1) {
                 <h2 class="text-white font-extrabold uppercase tracking-widest text-sm mb-6 drop-shadow">Ubicación y
                     Acceso</h2>
                 <div
-                    class="aspect-[3/4] w-full rounded-xl bg-white/20 mb-6 flex items-center justify-center overflow-hidden border border-white/20">
+                    class="w-full rounded-xl bg-white/20 mb-6 flex items-center justify-center overflow-hidden border border-white/20" style="height:400px;">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5307.41073392544!2d-68.71321014068732!3d-31.485314534038586!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9681450031056b01%3A0xaa48e807cd9dee77!2sR%C3%ADo%20San%20Juan!5e1!3m2!1ses!2sar!4v1769490447238!5m2!1ses!2sar"
                         width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
