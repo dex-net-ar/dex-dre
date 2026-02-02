@@ -322,10 +322,12 @@ if ($isDay == 1) {
                         <div class="bg-white/30 p-4 rounded-xl w-full text-center">
                             <p class="text-lg font-bold text-sky-900 drop-shadow">
                                 <?php
-                                if ($caudal <= 25) {
-                                    echo 'NO apto para bañarse';
-                                } else {
-                                    echo 'Apto para bañarse';
+                                if ($caudal >= 0 && $caudal < 33) {
+                                    echo 'Sin caudal';
+                                } elseif ($caudal >= 33 && $caudal < 66) {
+                                    echo 'Caudal medio';
+                                } elseif ($caudal >= 66 && $caudal <= 100) {
+                                    echo 'Caudal alto';
                                 }
                                 ?>
                             </p>
